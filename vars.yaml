@@ -1,0 +1,20 @@
+# vars.yml
+resource_group_name: myResourceGroup
+location: centralus
+virtual_network_name: myVnet
+address_prefixes: "10.0.0.0/16"
+subnet_name: mySubnet
+subnet_address_prefix: "10.0.1.0/24"
+public_ip_name: myPublicIP
+security_group_name: myNetworkSecurityGroup
+ssh_source_ip: "223.239.0.249"
+network_interface_name: myNIC
+vm_name: vm721du
+vm_size: Standard_B2ms
+admin_username: azureuser
+ssh_key_data: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC9LZv4gD18Ay9x2bIzHIEPjvVgfTTg5cMaHpMwZPUv/NVQ6RmjrPQ8NTCqHR7odlwOWyr31MBnfokD1MWOXUyQC972g6rba62iF6ZcGj+zq00wXbyoVM8SOyU5ZXk7IvAmt9l25IKnHMBfXBQ8+ZrlMX1I4DDQGkL1JDmj2LIpyi3XX5zd/ydAWHz0GgkGzyDjvrT+MLj4ZHkshMyfP8VEpbNoDdOHr8Z0gyxGz9Rjp26huF69oHvp5g8Jo1XNb8LQDzDtGaz8vAurOPqpSbPhmFgQFe43po5j7WxilaOgDSUOunfgu+KmSaYXqmCgch0q5VUi7dKPTNPKsUY2SVnYRp1kN2A7MOytH3ks+yO86mwaL1CvLtG3zEOVPuY9bHQF58qKxlA8ED9t5NDHTWlpjT2TkDSOiRvSH3yovGylJhMFT9XLXGgSYyvAgjg/9KlyBNh4ZRVn84dpd+yaM41dQx6LRvBfj0E2vtuD9dOy+vUQ5P04cNK1CsD5ipHowv5fkQ0kUHG3x6HR7Gv9DOmNJyIloWQQcjnp+EdkT3yy/wWePbHcizgAe0T+bIeSnubvUBx+eQbytm6X4CZWGi3BEbcjwUCknvMbNjJf0i8bvZIvxFlLEmzOfffB1ymzvctYlby2ysQvC+f27JsAt+6o0IqWFBwqI6+gXHDLjptn0w== dhaneshuk@dhanesh'
+managed_disk_type: Standard_LRS
+image_offer: 0001-com-ubuntu-server-jammy
+image_publisher: Canonical
+image_sku: 22_04-lts
+image_version: latest
