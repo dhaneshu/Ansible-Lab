@@ -1,5 +1,3 @@
-
-
 # Ansible Lab Setup Guide
 
 This guide provides step-by-step instructions to set up Ansible on Windows using WSL2 and use it to deploy an Azure Virtual Machine.
@@ -106,13 +104,43 @@ curl ifconfig.me
 
 ### Update `vars.yaml` with Your Inputs
 
-Modify the `vars.yaml` file with the required details before running the playbook.
+Modify the `vars.yaml` file with the required details:
+
+```yaml
+resource_group_name: myResourceGroup
+location: centralus
+virtual_network_name: myVnet
+address_prefixes: "10.0.0.0/16"
+subnet_name: mySubnet
+subnet_address_prefix: "10.0.1.0/24"
+public_ip_name: myPublicIP
+security_group_name: myNetworkSecurityGroup
+ssh_source_ip: "<your-public-ip>"
+network_interface_name: myNIC
+vm_name: vm721du
+vm_size: Standard_B2ms
+admin_username: azureuser
+ssh_key_data: '<your-ssh-public-key>'
+managed_disk_type: Standard_LRS
+image_offer: 0001-com-ubuntu-server-jammy
+image_publisher: Canonical
+image_sku: 22_04-lts
+image_version: latest
+```
 
 ### Run the Ansible Playbook
 
 ```sh
 ansible-playbook azurevm.yaml -e "@vars.yaml"
 ```
+
+This playbook performs the following tasks:
+- Creates an Azure Resource Group
+- Deploys a Virtual Network and Subnet
+- Assigns a Public IP
+- Configures a Network Security Group allowing SSH access from your public IP
+- Creates a Virtual Network Interface
+- Deploys a Virtual Machine with Ubuntu 22.04 LTS
 
 ---
 
