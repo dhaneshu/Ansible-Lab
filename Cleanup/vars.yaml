@@ -1,0 +1,4 @@
+resource_groups:
+  - myResourceGroup1
+  - myResourceGroup2
+  - myResourceGroup3

@@ -1,0 +1,15 @@
+# cleanup.yml
+- name: Delete Multiple Azure Resource Groups
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yaml
+  tasks:
+    - name: Delete resource groups
+      loop: "{{ resource_groups }}"
+      loop_control:
+        loop_var: rg
+      azure_rm_resourcegroup:
+        name: "{{ rg }}"
+        state: absent
+        force_delete_nonempty: true

@@ -1,0 +1,88 @@
+# Azure VM Playbook
+
+- name: Create Azure Resource Group and Network
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yaml
+  tasks:
+    - name: Create resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group_name }}"
+        location: "{{ location }}"
+
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ virtual_network_name }}"
+        address_prefixes: "{{ address_prefixes }}"
+
+    - name: Add subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ subnet_name }}"
+        address_prefix: "{{ subnet_address_prefix }}"
+        virtual_network: "{{ virtual_network_name }}"
+
+    - name: Create network security group
+      azure_rm_securitygroup:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ security_group_name }}"
+        rules:
+          - name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+            source_address_prefix: "{{ ssh_source_ip }}"
+
+- name: Deploy Multiple Azure VMs
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yaml
+  tasks:
+    - name: Create public IP addresses
+      azure_rm_publicipaddress:
+        resource_group: "{{ resource_group_name }}"
+        allocation_method: Static
+        name: "{{ public_ip_prefix }}-{{ item.name }}"
+      loop: "{{ vm_list }}"
+      register: output_ip_addresses
+
+    - name: Create network interfaces
+      azure_rm_networkinterface:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ network_interface_prefix }}-{{ item.name }}"
+        virtual_network: "{{ virtual_network_name }}"
+        subnet: "{{ subnet_name }}"
+        ip_configurations:
+          - name: ipconfig1
+            public_ip_address_name: "{{ public_ip_prefix }}-{{ item.name }}"
+        security_group: "{{ security_group_name }}"
+      loop: "{{ vm_list }}"
+
+    - name: Create VMs
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ item.name }}"
+        vm_size: "{{ item.vm_size }}"
+        admin_username: "{{ admin_username }}"
+        ssh_password_enabled: false
+        ssh_public_keys:
+          - path: /home/{{ admin_username }}/.ssh/authorized_keys
+            key_data: "{{ ssh_key_data }}"
+        network_interfaces: "{{ network_interface_prefix }}-{{ item.name }}"
+        managed_disk_type: "{{ managed_disk_type }}"
+        image:
+          offer: "{{ image_offer }}"
+          publisher: "{{ image_publisher }}"
+          sku: "{{ image_sku }}"
+          version: "{{ image_version }}"
+      loop: "{{ vm_list }}"
+
+    - name: Display public IPs
+      debug:
+        msg: "VM {{ item.name }} is accessible at {{ (output_ip_addresses.results | selectattr('item.name', 'equalto', item.name) | map(attribute='state.ip_address') | first | default('No IP assigned')) }}"
+      loop: "{{ vm_list }}"
