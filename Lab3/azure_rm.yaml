@@ -1,0 +1,26 @@
+plugin: azure_rm
+auth_source: auto
+include_vm_resource_groups:
+  - appRG2
+
+# Filter VMs based on tags
+keyed_groups:
+  - key: tags.Environment
+    prefix: tag_Environment
+  - key: tags.Role
+    prefix: tag_Role
+  - key: tags.Project
+    prefix: tag_Project
+
+# Only include VMs with specific tags
+conditional_groups:
+  webservers: "tags.Environment == 'lab' and tags.Role == 'webserver' and tags.Project == 'azure-ansible-lab'"
+
+# Correctly extract only the IP string for ansible_host
+hostvar_expressions:
+  ansible_host: >-
+    (public_ipv4_address[0] 
+    if public_ipv4_address is defined and public_ipv4_address | length > 0 
+    else private_ipv4_addresses[0] 
+    if private_ipv4_addresses is defined and private_ipv4_addresses | length > 0 
+    else '127.0.0.1')

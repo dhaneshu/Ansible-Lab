@@ -1,0 +1,76 @@
+
+
+
+resource_group_name: appRG2
+location: centralus
+virtual_network_name: newVnet
+vnet_address_prefixes:
+  - "10.0.0.0/16"
+
+subnet_list:
+  - name: vmsubnet
+    address_prefix: "10.0.1.0/24"
+    nsg_name: "vmNSG"
+    nsg_rules:
+      - name: AllowSSH
+        protocol: Tcp
+        destination_port_range: 22
+        access: Allow
+        priority: 1001
+        direction: Inbound
+        source_address_prefix: "43.229.89.45"
+      - name: AllowHTTP
+        protocol: Tcp
+        destination_port_range: 80
+        access: Allow
+        priority: 1002
+        direction: Inbound
+        source_address_prefix: "43.229.89.4"
+  - name: appgwsubnet
+    address_prefix: "10.0.2.0/24"
+    nsg_name: "appNSG"
+    nsg_rules:
+      - name: AllowHTTP
+        protocol: Tcp
+        destination_port_range: 80
+        access: Allow
+        priority: 1002
+        direction: Inbound
+        source_address_prefix: "*"
+
+public_ip_prefix: pip
+network_interface_prefix: nic
+vm_list:
+  - name: vm1
+    vm_size: Standard_B2ms
+    subnet_name : vmsubnet
+    tags:
+      Environment: lab
+      Role: webserver
+      Project: azure-ansible-lab
+  - name: vm2
+    vm_size: Standard_B2ms
+    subnet_name: vmsubnet
+    tags:
+      Environment: lab
+      Role: webserver
+      Project: azure-ansible-lab
+
+admin_username: azureuser
+ssh_key_data: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC9LZv4gD18Ay9x2bIzHIEPjvVgfTTg5cMaHpMwZPUv/NVQ6RmjrPQ8NTCqHR7odlwOWyr31MBnfokD1MWOXUyQC972g6rba62iF6ZcGj+zq00wXbyoVM8SOyU5ZXk7IvAmt9l25IKnHMBfXBQ8+ZrlMX1I4DDQGkL1JDmj2LIpyi3XX5zd/ydAWHz0GgkGzyDjvrT+MLj4ZHkshMyfP8VEpbNoDdOHr8Z0gyxGz9Rjp26huF69oHvp5g8Jo1XNb8LQDzDtGaz8vAurOPqpSbPhmFgQFe43po5j7WxilaOgDSUOunfgu+KmSaYXqmCgch0q5VUi7dKPTNPKsUY2SVnYRp1kN2A7MOytH3ks+yO86mwaL1CvLtG3zEOVPuY9bHQF58qKxlA8ED9t5NDHTWlpjT2TkDSOiRvSH3yovGylJhMFT9XLXGgSYyvAgjg/9KlyBNh4ZRVn84dpd+yaM41dQx6LRvBfj0E2vtuD9dOy+vUQ5P04cNK1CsD5ipHowv5fkQ0kUHG3x6HR7Gv9DOmNJyIloWQQcjnp+EdkT3yy/wWePbHcizgAe0T+bIeSnubvUBx+eQbytm6X4CZWGi3BEbcjwUCknvMbNjJf0i8bvZIvxFlLEmzOfffB1ymzvctYlby2ysQvC+f27JsAt+6o0IqWFBwqI6+gXHDLjptn0w== dhaneshuk@dhanesh'
+managed_disk_type: Standard_LRS
+image_offer: 0001-com-ubuntu-server-jammy
+image_publisher: Canonical
+image_sku: 22_04-lts
+image_version: latest
+vm_security_group_name: vmNSG
+
+# # NGINX input variables
+# vm_tags: tag_Environment_lab:&tag_Role_webserver:&tag_Project_azure-ansible-lab
+content: '<html><body><h1>Welcome to Azure Ansible Lab</h1></body></html>'
+
+# App gateway variables
+app_gateway_name: "AnsibleAppGateway"
+app_gateway_sku: "Standard_v2"
+app_gateway_public_ip_name: "AppGatewayPublicIP"
+dns_name_label: "ansible-lab"

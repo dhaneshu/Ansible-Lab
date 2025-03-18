@@ -1,0 +1,51 @@
+# This is an Ansible playbook to install Nginx and configure a sample web page.
+- name: Install Nginx and Configure Sample Web Page
+  hosts: webservers
+  remote_user: azureuser
+  become: True
+  vars_files:
+  - vars.yaml
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: True
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Start and enable Nginx service
+      systemd:
+        name: nginx
+        state: started
+        enabled: True
+
+    - name: Create sample web page
+      copy:
+        content: "{{ content }}"
+        dest: /var/www/html/index.html
+
+- name: Open Port 80 in iptables
+  hosts: webservers
+  remote_user: azureuser
+  become: True
+  tasks:
+    - name: Allow HTTP traffic on port 80
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: 80
+        jump: ACCEPT
+
+    - name: Install iptables-persistent to save rules
+      apt:
+        name: iptables-persistent
+        state: present
+        update_cache: yes
+
+    - name: Save iptables rules
+      command: netfilter-persistent save
+
+    - name: Reload iptables rules
+      command: netfilter-persistent reload
