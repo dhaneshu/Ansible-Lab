@@ -1,4 +1,6 @@
 resource_groups:
-  - myResourceGroup1
-  - myResourceGroup2
-  - myResourceGroup3
+  - myResourceGroup
+  - NewRG
+  - appRG2
+  - appRG
+
