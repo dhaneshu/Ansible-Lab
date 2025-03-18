@@ -78,3 +78,4 @@ python3 -c "import azure; print('Azure module is installed')"
 
 - [Lab 1: Single VM Deployment](Lab1/README.md)
 - [Lab 2: Multi-VM Deployment](Lab2/README.md)
+- [Lab 3: VMs and Application Deployment](Lab3/README.md)
